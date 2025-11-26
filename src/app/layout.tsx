@@ -10,7 +10,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  title: "منوعبة | Munaawaba - نظام إدارة المواعيد",
+  title: "مناوبة | Munaawaba - نظام إدارة المواعيد",
   description: "نظام متكامل لإدارة مواعيد الصيانة والخدمات الميدانية",
 };
 
