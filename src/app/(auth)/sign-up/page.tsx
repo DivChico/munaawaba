@@ -1,5 +1,5 @@
 "use client";
-// TODO: use react hook form 
+
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -47,6 +47,7 @@ export default function SignUpPage() {
                         phone: phone,
                         role: 'employee', // Default role
                     },
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
                 },
             });
 
@@ -54,11 +55,6 @@ export default function SignUpPage() {
 
             if (data.user) {
                 setSuccess(true);
-                // Redirect after 2 seconds
-                setTimeout(() => {
-                    router.push("/dashboard");
-                    router.refresh();
-                }, 2000);
             }
         } catch (err: any) {
             setError(err.message || "حدث خطأ أثناء إنشاء الحساب");
@@ -83,15 +79,34 @@ export default function SignUpPage() {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                     strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                                 />
                             </svg>
                         </div>
-                        <h2 className="text-2xl font-bold mb-2">تم إنشاء الحساب بنجاح!</h2>
-                        <p className="text-muted-foreground mb-4">
-                            جاري تحويلك إلى لوحة التحكم...
+                        <h2 className="text-2xl font-bold mb-2">تحقق من بريدك الإلكتروني</h2>
+                        <p className="text-muted-foreground mb-6">
+                            تم إرسال رسالة تأكيد إلى <strong>{email}</strong>
                         </p>
-                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                        <div className="bg-muted/50 rounded-lg p-4 mb-6 text-right">
+                            <p className="text-sm text-muted-foreground mb-2">
+                                الخطوات التالية:
+                            </p>
+                            <ol className="text-sm space-y-2 list-decimal list-inside text-foreground">
+                                <li>افتح بريدك الإلكتروني</li>
+                                <li>ابحث عن رسالة من مناوبة</li>
+                                <li>اضغط على رابط التأكيد</li>
+                                <li>سيتم تحويلك لتسجيل الدخول</li>
+                            </ol>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-4">
+                            لم تستلم الرسالة؟ تحقق من مجلد الرسائل غير المرغوب فيها
+                        </p>
+                        <Link
+                            href="/sign-in"
+                            className="inline-block rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                        >
+                            العودة لتسجيل الدخول
+                        </Link>
                     </div>
                 </div>
             </div>

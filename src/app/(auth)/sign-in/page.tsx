@@ -1,11 +1,10 @@
 "use client";
-// TODO: use react hook form 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function SignInPage() {
     const [email, setEmail] = useState("");
@@ -13,13 +12,28 @@ export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const router = useRouter();
+    const searchParams = useSearchParams();
     const supabase = createClient();
+
+    // Check for confirmation or error messages from URL
+    useEffect(() => {
+        const confirmed = searchParams.get('confirmed');
+        const errorParam = searchParams.get('error');
+
+        if (confirmed === 'true') {
+            setSuccessMessage('تم تأكيد بريدك الإلكتروني بنجاح! يمكنك الآن تسجيل الدخول.');
+        } else if (errorParam === 'confirmation_failed') {
+            setError('فشل تأكيد البريد الإلكتروني. يرجى المحاولة مرة أخرى.');
+        }
+    }, [searchParams]);
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
+        setSuccessMessage("");
 
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
@@ -55,9 +69,19 @@ export default function SignInPage() {
                 <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
                     <h2 className="text-2xl font-bold mb-6">تسجيل الدخول</h2>
 
+                    {/* Success Message */}
+                    {successMessage && (
+                        <div className="mb-4 rounded-lg bg-primary/10 border border-primary/20 p-3 text-sm text-primary flex items-start gap-2">
+                            <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                            <span>{successMessage}</span>
+                        </div>
+                    )}
+
+                    {/* Error Message */}
                     {error && (
-                        <div className="mb-4 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
-                            {error}
+                        <div className="mb-4 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive flex items-start gap-2">
+                            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                            <span>{error}</span>
                         </div>
                     )}
 
