@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     Calendar,
     ClipboardList,
@@ -17,25 +17,65 @@ import {
     Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 const navigation = [
-    { name: "لوحة التحكم", href: "/", icon: LayoutDashboard },
-    { name: "التقويم", href: "/calendar", icon: Calendar },
-    { name: "المواعيد", href: "/appointments", icon: ClipboardList },
-    { name: "العملاء", href: "/customers", icon: Users },
-    { name: "التقارير", href: "/reports", icon: FileText },
-    { name: "الإعدادات", href: "/settings", icon: Settings },
+    { name: "لوحة التحكم", href: "/dashboard", icon: LayoutDashboard },
+    { name: "التقويم", href: "/dashboard/calendar", icon: Calendar },
+    { name: "المواعيد", href: "/dashboard/appointments", icon: ClipboardList },
+    { name: "العملاء", href: "/dashboard/customers", icon: Users },
+    { name: "التقارير", href: "/dashboard/reports", icon: FileText },
+    { name: "الإعدادات", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isDark, setIsDark] = useState(false);
+    const [user, setUser] = useState<any>(null);
+    const [profile, setProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const pathname = usePathname();
+    const router = useRouter();
+    const supabase = createClient();
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+
+            if (user) {
+                // Fetch profile data
+                const { data: profileData } = await supabase
+                    .from('profiles')
+                    .select('full_name, role')
+                    .eq('id', user.id)
+                    .single();
+
+                setProfile(profileData);
+            }
+            setLoading(false);
+        };
+
+        getUser();
+    }, []);
 
     const toggleTheme = () => {
         setIsDark(!isDark);
         document.documentElement.classList.toggle("dark");
     };
+
+    const handleSignOut = async () => {
+        await supabase.auth.signOut();
+        router.push('/');
+        router.refresh();
+    };
+
+    // Get display name and initials
+    const displayName = profile?.full_name || user?.email?.split('@')[0] || 'مستخدم';
+    const displayEmail = user?.email || '';
+    const initials = profile?.full_name
+        ? profile.full_name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+        : displayEmail[0]?.toUpperCase() || 'م';
 
     return (
         <>
@@ -111,22 +151,27 @@ export function Sidebar() {
                         </button>
 
                         {/* User Profile */}
-                        <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent px-4 py-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
-                                م
+                        {!loading && user && (
+                            <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent px-4 py-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">
+                                    {initials}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-sidebar-foreground truncate">
+                                        {displayName}
+                                    </p>
+                                    <p className="text-xs text-sidebar-foreground/60 truncate">
+                                        {displayEmail}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-sidebar-foreground truncate">
-                                    مدير النظام
-                                </p>
-                                <p className="text-xs text-sidebar-foreground/60 truncate">
-                                    admin@munaawaba.com
-                                </p>
-                            </div>
-                        </div>
+                        )}
 
                         {/* Logout */}
-                        <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 transition-all duration-200">
+                        <button
+                            onClick={handleSignOut}
+                            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 transition-all duration-200"
+                        >
                             <LogOut className="h-5 w-5" />
                             <span>تسجيل الخروج</span>
                         </button>

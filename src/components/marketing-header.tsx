@@ -2,10 +2,31 @@
 
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export function MarketingHeader() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const supabase = createClient();
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+            setLoading(false);
+        };
+
+        getUser();
+
+        // Subscribe to auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -40,20 +61,35 @@ export function MarketingHeader() {
                 </nav>
 
                 {/* CTA Buttons */}
-                <div className="hidden md:flex items-center gap-4">
-                    <Link
-                        href="/dashboard"
-                        className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
-                    >
-                        تسجيل الدخول
-                    </Link>
-                    <Link
-                        href="/dashboard"
-                        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-                    >
-                        ابدأ الآن
-                    </Link>
-                </div>
+                {!loading && (
+                    <div className="hidden md:flex items-center gap-4">
+                        {user ? (
+                            // Authenticated - Show Dashboard button
+                            <Link
+                                href="/dashboard"
+                                className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                            >
+                                لوحة التحكم
+                            </Link>
+                        ) : (
+                            // Not authenticated - Show Sign In/Sign Up
+                            <>
+                                <Link
+                                    href="/sign-in"
+                                    className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+                                >
+                                    تسجيل الدخول
+                                </Link>
+                                <Link
+                                    href="/sign-up"
+                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                                >
+                                    ابدأ الآن
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                )}
 
                 {/* Mobile Menu Button */}
                 <button
@@ -90,18 +126,38 @@ export function MarketingHeader() {
                             الأسئلة الشائعة
                         </Link>
                         <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                            <Link
-                                href="/dashboard"
-                                className="text-center rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-accent"
-                            >
-                                تسجيل الدخول
-                            </Link>
-                            <Link
-                                href="/dashboard"
-                                className="text-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-                            >
-                                ابدأ الآن
-                            </Link>
+                            {!loading && (
+                                <>
+                                    {user ? (
+                                        // Authenticated - Show Dashboard button
+                                        <Link
+                                            href="/dashboard"
+                                            className="text-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            لوحة التحكم
+                                        </Link>
+                                    ) : (
+                                        // Not authenticated - Show Sign In/Sign Up
+                                        <>
+                                            <Link
+                                                href="/sign-in"
+                                                className="text-center rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-accent"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                تسجيل الدخول
+                                            </Link>
+                                            <Link
+                                                href="/sign-up"
+                                                className="text-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                ابدأ الآن
+                                            </Link>
+                                        </>
+                                    )}
+                                </>
+                            )}
                         </div>
                     </nav>
                 </div>
