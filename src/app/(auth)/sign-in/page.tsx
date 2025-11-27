@@ -17,6 +17,17 @@ export default function SignInPage() {
     const searchParams = useSearchParams();
     const supabase = createClient();
 
+    // Redirect if already authenticated
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                router.push('/dashboard');
+            }
+        };
+        checkUser();
+    }, [router, supabase]);
+
     // Check for confirmation or error messages from URL
     useEffect(() => {
         const confirmed = searchParams.get('confirmed');
