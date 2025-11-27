@@ -1,4 +1,5 @@
 import { Calendar, ClipboardList, Users, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const stats = [
@@ -78,12 +79,12 @@ export default function DashboardPage() {
           استخدم القائمة الجانبية للتنقل بين الأقسام المختلفة.
         </p>
         <div className="flex gap-4">
-          <button className="rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-md hover:bg-primary/90 transition-colors duration-200">
+          <Link href="/dashboard/calendar" className="rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-md hover:bg-primary/90 transition-colors duration-200">
             إضافة موعد جديد
-          </button>
-          <button className="rounded-lg border border-border bg-card px-6 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors duration-200">
+          </Link>
+          <Link href="/dashboard/calendar" className="rounded-lg border border-border bg-card px-6 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors duration-200">
             عرض التقويم
-          </button>
+          </Link>
         </div>
       </div>
     </div>
