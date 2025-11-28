@@ -106,7 +106,7 @@ export function Sidebar() {
                 <div className="flex h-full flex-col">
                     {/* Logo */}
                     <div className="flex h-16 items-center justify-center border-b border-sidebar-border px-6">
-                        <h1 className="text-2xl font-bold bg-gradient-to-l from-primary to-chart-2 bg-clip-text text-transparent">
+                        <h1 className="text-4xl font-bold bg-gradient-to-l from-primary to-chart-2 bg-clip-text text-transparent">
                             مناوبة
                         </h1>
                     </div>

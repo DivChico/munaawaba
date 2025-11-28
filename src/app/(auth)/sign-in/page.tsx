@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
-export default function SignInPage() {
+function SignInForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -182,5 +182,35 @@ export default function SignInPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+// Loading fallback component
+function SignInLoading() {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background p-4">
+            <div className="w-full max-w-md">
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold bg-gradient-to-l from-primary to-chart-2 bg-clip-text text-transparent mb-2">
+                        مناوبة
+                    </h1>
+                    <p className="text-muted-foreground">نظام إدارة المواعيد والصيانة</p>
+                </div>
+                <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
+                    <div className="flex items-center justify-center py-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Main page component with Suspense boundary
+export default function SignInPage() {
+    return (
+        <Suspense fallback={<SignInLoading />}>
+            <SignInForm />
+        </Suspense>
     );
 }

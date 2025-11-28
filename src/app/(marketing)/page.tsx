@@ -109,16 +109,16 @@ export default function LandingPage() {
     return (
         <div className="flex flex-col">
             {/* Hero Section */}
-            <section className="container mx-auto px-4 py-20 lg:py-32">
-                <div className="grid gap-12 lg:grid-cols-2 items-center">
-                    <div className="space-y-6">
+            <section className="container mx-auto px-4 py-20 ">
+                <div className="grid gap-12  items-center">
+                    <div className="space-y-6 flex  flex-col items-center justify-center">
                         <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                             نظام إدارة المواعيد
                             <span className="block bg-gradient-to-l from-primary to-chart-2 bg-clip-text text-transparent">
                                 للشركات الميدانية
                             </span>
                         </h1>
-                        <p className="text-lg text-muted-foreground max-w-xl">
+                        <p className="text-lg text-muted-foreground max-w-xl text-center">
                             أدِر مواعيد الصيانة والخدمات الميدانية بكفاءة عالية. نظام متكامل مع
                             إشعارات تلقائية، تتبع الفنيين، وتقارير شاملة.
                         </p>
@@ -138,16 +138,18 @@ export default function LandingPage() {
                         </div>
                     </div>
 
-                    {/* Screenshot Placeholder */}
+                    {/* Screenshot */}
                     <div className="relative">
                         <div className="rounded-2xl border-2 border-border bg-gradient-to-br from-primary/10 via-chart-2/10 to-chart-3/10 p-8 shadow-2xl">
-                            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <div className="text-center space-y-2">
-                                    <Calendar className="h-16 w-16 mx-auto text-primary" />
-                                    <p className="text-sm text-muted-foreground">
-                                        لقطة شاشة من لوحة التحكم
-                                    </p>
-                                </div>
+                            <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                                <Image
+                                    src="/add-appointmanet.png"
+                                    alt="لقطة شاشة من لوحة التحكم - إضافة موعد"
+                                    width={1920}
+                                    height={1080}
+                                    className="w-full h-full object-cover"
+                                    priority
+                                />
                             </div>
                         </div>
                     </div>
