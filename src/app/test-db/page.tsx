@@ -10,32 +10,22 @@ export default function TestDB() {
 
     useEffect(() => {
         async function fetchData() {
-            // 1. Fetch Appointments (without technician join for now)
-            const { data: appointments, error: appError } = await supabase
+            // Fetch appointments with direct foreign key joins
+            const { data, error } = await supabase
                 .from('appointments')
                 .select(`
-          *,
-          customer:customers(name),
-          service:services(name_ar)
-        `);
+                    *,
+                    customer:customers(name),
+                    service:services(name_ar),
+                    technician:profiles(id, full_name)
+                `);
 
-            if (appError) {
-                setError(appError);
+            if (error) {
+                setError(error);
                 return;
             }
 
-            // 2. Fetch Profiles separately
-            const { data: profiles } = await supabase
-                .from('profiles')
-                .select('id, full_name');
-
-            // 3. Manual Join
-            const joinedData = appointments?.map(app => ({
-                ...app,
-                technician: profiles?.find(p => p.id === app.technician_id)
-            }));
-
-            setData(joinedData);
+            setData(data);
         }
         fetchData();
     }, []);

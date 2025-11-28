@@ -44,46 +44,23 @@ export default function CalendarPage() {
 
     const fetchAppointments = async () => {
         try {
-            // 1. Fetch appointments without technician join
-            const { data: appointments, error } = await supabase
+            // Fetch appointments with direct foreign key joins
+            const { data, error } = await supabase
                 .from('appointments')
                 .select(`
-          *,
-          customer:customers(name),
-          service:services(name_ar)
-        `)
+                    *,
+                    customer:customers(name),
+                    service:services(name_ar),
+                    technician:profiles(id, full_name)
+                `)
                 .order('start_time', { ascending: true });
 
             if (error) {
-                console.warn('Supabase query issue:', error.message);
+                console.error('Error fetching appointments:', error);
                 setEvents([]);
                 setLoading(false);
                 return;
             }
-
-            // 2. Fetch technician profiles manually
-            const technicianIds = Array.from(new Set(appointments?.map((a: any) => a.technician_id).filter(Boolean))) as string[];
-            let profilesMap: Record<string, any> = {};
-
-            if (technicianIds.length > 0) {
-                const { data: profiles } = await supabase
-                    .from('profiles')
-                    .select('id, full_name')
-                    .in('id', technicianIds);
-
-                if (profiles) {
-                    profilesMap = profiles.reduce((acc, profile) => {
-                        acc[profile.id] = profile;
-                        return acc;
-                    }, {} as Record<string, any>);
-                }
-            }
-
-            // 3. Merge data
-            const data = appointments?.map((apt: any) => ({
-                ...apt,
-                technician: profilesMap[apt.technician_id] || null
-            })) || [];
 
             // Transform to FullCalendar events
             const calendarEvents = data?.map((apt: any) => ({
@@ -100,7 +77,7 @@ export default function CalendarPage() {
 
             setEvents(calendarEvents);
         } catch (error: any) {
-            console.warn('Calendar data fetch:', error?.message || 'No appointments yet');
+            console.error('Calendar data fetch error:', error);
             setEvents([]);
         } finally {
             setLoading(false);

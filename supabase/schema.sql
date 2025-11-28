@@ -102,7 +102,7 @@ CREATE POLICY "Authenticated users can update customers"
 CREATE TABLE IF NOT EXISTS public.appointments (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   customer_id UUID REFERENCES public.customers(id) ON DELETE CASCADE NOT NULL,
-  technician_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  technician_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   service_id UUID REFERENCES public.services(id) ON DELETE SET NULL,
   
   -- Scheduling
