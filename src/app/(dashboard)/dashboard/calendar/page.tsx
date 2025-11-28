@@ -7,10 +7,15 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { createClient } from "@/lib/supabase/client";
 import { Plus } from "lucide-react";
+import { AppointmentModal } from "@/components/appointments/appointment-modal";
+import { Toaster } from "sonner";
 
 export default function CalendarPage() {
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null);
     const supabase = createClient();
 
     useEffect(() => {
@@ -39,22 +44,51 @@ export default function CalendarPage() {
 
     const fetchAppointments = async () => {
         try {
-            const { data, error } = await supabase
+            // 1. Fetch appointments without technician join
+            const { data: appointments, error } = await supabase
                 .from('appointments')
                 .select(`
           *,
           customer:customers(name),
-          service:services(name_ar),
-          technician:profiles(full_name)
+          service:services(name_ar)
         `)
                 .order('start_time', { ascending: true });
 
-            if (error) throw error;
+            if (error) {
+                console.warn('Supabase query issue:', error.message);
+                setEvents([]);
+                setLoading(false);
+                return;
+            }
+
+            // 2. Fetch technician profiles manually
+            const technicianIds = Array.from(new Set(appointments?.map((a: any) => a.technician_id).filter(Boolean))) as string[];
+            let profilesMap: Record<string, any> = {};
+
+            if (technicianIds.length > 0) {
+                const { data: profiles } = await supabase
+                    .from('profiles')
+                    .select('id, full_name')
+                    .in('id', technicianIds);
+
+                if (profiles) {
+                    profilesMap = profiles.reduce((acc, profile) => {
+                        acc[profile.id] = profile;
+                        return acc;
+                    }, {} as Record<string, any>);
+                }
+            }
+
+            // 3. Merge data
+            const data = appointments?.map((apt: any) => ({
+                ...apt,
+                technician: profilesMap[apt.technician_id] || null
+            })) || [];
 
             // Transform to FullCalendar events
             const calendarEvents = data?.map((apt: any) => ({
                 id: apt.id,
-                title: `${apt.customer?.name} - ${apt.service?.name_ar}`,
+                title: `${apt.customer?.name || 'عميل'} - ${apt.service?.name_ar || 'خدمة'}`,
                 start: apt.start_time,
                 end: apt.end_time,
                 backgroundColor: getEventColor(apt),
@@ -65,8 +99,9 @@ export default function CalendarPage() {
             })) || [];
 
             setEvents(calendarEvents);
-        } catch (error) {
-            console.error('Error fetching appointments:', error);
+        } catch (error: any) {
+            console.warn('Calendar data fetch:', error?.message || 'No appointments yet');
+            setEvents([]);
         } finally {
             setLoading(false);
         }
@@ -97,8 +132,9 @@ export default function CalendarPage() {
     };
 
     const handleDateClick = (arg: any) => {
-        // TODO: Open appointment creation modal
-        console.log('Date clicked:', arg.dateStr);
+        setSelectedDate(new Date(arg.date));
+        setSelectedSlot(null);
+        setIsModalOpen(true);
     };
 
     const handleEventClick = (clickInfo: any) => {
@@ -106,8 +142,16 @@ export default function CalendarPage() {
         console.log('Event clicked:', clickInfo.event.extendedProps);
     };
 
+    const handleSelect = (selectInfo: any) => {
+        setSelectedDate(selectInfo.start);
+        setSelectedSlot({ start: selectInfo.start, end: selectInfo.end });
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="p-6">
+            <Toaster position="top-center" richColors />
+
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -116,7 +160,14 @@ export default function CalendarPage() {
                         إدارة مواعيد الصيانة والخدمات
                     </p>
                 </div>
-                <button className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                <button
+                    onClick={() => {
+                        setSelectedDate(new Date());
+                        setSelectedSlot(null);
+                        setIsModalOpen(true);
+                    }}
+                    className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
                     <Plus className="h-4 w-4" />
                     موعد جديد
                 </button>
@@ -152,15 +203,24 @@ export default function CalendarPage() {
                         direction="rtl"
                         locale="ar"
                         slotMinTime="08:00:00"
-                        slotMaxTime="22:00:00"
+                        slotMaxTime="23:00:00"
                         allDaySlot={false}
                         height="auto"
                         dateClick={handleDateClick}
+                        select={handleSelect}
                         eventClick={handleEventClick}
                         eventContent={renderEventContent}
                     />
                 )}
             </div>
+
+            <AppointmentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                selectedDate={selectedDate}
+                selectedSlot={selectedSlot}
+                onSuccess={fetchAppointments}
+            />
 
             {/* Legend */}
             <div className="mt-4 flex items-center gap-6 text-sm">
