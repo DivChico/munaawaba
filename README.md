@@ -14,23 +14,23 @@
 ## 🔗 روابط المشروع
 
 - **🌐 النسخة التجريبية المباشرة**: [munaawaba.vercel.app](#) _(قريباً)_
-- **👨‍💻 معرض الأعمال**: [your-portfolio-link.com](#)
-- **📂 GitHub**: [github.com/your-username/munaawaba](#)
+- **👨‍💻 معرض الأعمال**: [https://divchico.onrender.com/](#)
+- **📂 GitHub**: [https://github.com/DivChico/munaawaba](#)
 
 ---
 
 ## 📸 لقطات الشاشة
 
 ### الصفحة الرئيسية للوحة التحكم
-![Dashboard Home](./dashboard.png)
+![Dashboard Home](./public/dashbord.png)
 _لوحة تحكم شاملة تعرض إحصائيات المواعيد اليومية والعملاء_
 
 ### تقويم المواعيد التفاعلي
-![Calendar View](.calendar.png)
+![Calendar View](./public/calender.png)
 _عرض تقويمي احترافي مع دعم الفترات الصباحية والمسائية_
 
 ### نموذج حجز الموعد
-![Appointment Modal](./screenshots/appointment-modal.png)
+![Appointment Modal](./public/add-appointmanet.png)
 _نموذج متقدم لحجز المواعيد مع اختيار العميل والفني ونوع الخدمة_
 
 ### شعار النظام
@@ -525,13 +525,13 @@ munaawaba/
 
 ## 👨‍💻 المطور
 
-**[اسمك هنا]**
+**[ عبدالله العطاونة]**
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white)](#)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](#)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](#)
 [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](#)
-[![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@example.com)
+[![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:abdullah2001hamdy@gmail.com)
 
 ---
 
@@ -539,10 +539,10 @@ munaawaba/
 
 هل لديك أسئلة أو اقتراحات؟ لا تتردد في التواصل!
 
-- 📧 **البريد الإلكتروني**: your.email@example.com
-- 💼 **LinkedIn**: [linkedin.com/in/your-profile](#)
-- 🐦 **Twitter**: [@your_handle](#)
-- 📱 **الجوال**: +966 XXX XXX XXX
+- 📧 **البريد الإلكتروني**: abdullah2001hamdy@gmail.com
+- 💼 **LinkedIn**: [linkedin.com/in/abdullah-alatawwa](#)
+- 🐦 **Twitter**: [@abdullah_alatawwa](#)
+- 📱 **الجوال**: +972 597 518 519
 
 ---
 
@@ -904,9 +904,9 @@ This is an **enterprise-grade full-stack application** built with modern technol
 
 ## 👨‍💻 Developer
 
-**[Your Name Here]**
+**[abdullah hamdy]**
 
-**Full-Stack Developer | React & Next.js Specialist | Arabic/RTL Expert**
+**Full-Stack Developer | React & Next.js Expert**
 
 Passionate about building scalable, user-friendly web applications with modern technologies. Specialized in full-stack development with React, Next.js, TypeScript, and real-time databases.
 
@@ -916,10 +916,10 @@ Passionate about building scalable, user-friendly web applications with modern t
 
 Have questions or suggestions? Feel free to reach out!
 
-- 📧 **Email**: your.email@example.com
-- 💼 **LinkedIn**: [linkedin.com/in/your-profile](#)
+- 📧 **Email**: abdullah2001hamdy@gmail.com
+- 💼 **LinkedIn**: [https://www.linkedin.com/in/abdullah-alatawwa/](#)
 - 🐦 **Twitter**: [@your_handle](#)
-- 📱 **Phone**: +966 XXX XXX XXX
+- 📱 **Phone**: +972 597 518 519
 
 ---
 
@@ -941,6 +941,6 @@ Special thanks to:
 
 **⭐ If you found this project interesting, please give it a star!**
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [abdullah hamdy]
 
 </div>
